@@ -1,4 +1,16 @@
-# main application logic
+"""
+Client Management System
+
+This script allows adding and retrieving clients from a personal trainer's database.
+It uses SQLAlchemy for database interactions.
+
+Functions:
+- add_client: Adds a new client if the email is unique.
+- get_clients: Retrieves all clients from the database.
+
+Usage:
+Run the script and follow the prompts to add a new client.
+"""
 
 from database import SessionLocal
 from models import Client

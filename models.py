@@ -1,4 +1,9 @@
-# table definition
+"""
+Database Models
+
+This script defines the SQLAlchemy model for the 'clients' table,
+representing client information in the database.
+"""
 
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base

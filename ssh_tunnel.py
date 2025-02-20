@@ -1,4 +1,9 @@
-# SSH tunnel support
+"""
+SSH Tunnel Management
+
+This script defines a function to establish an SSH tunnel for secure
+remote database access using the SSHTunnelForwarder.
+"""
 
 from sshtunnel import SSHTunnelForwarder
 from config import SSH_HOST, SSH_PORT, SSH_USER, SSH_PASSWORD, DB_HOST, DB_PORT
