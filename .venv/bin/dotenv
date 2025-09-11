@@ -1,4 +1,4 @@
-#!/Users/monikasliwinska/PycharmProjects/ClientData/.venv/bin/python
+#!/Users/monikasliwinska/PycharmProjects/client-data/.venv/bin/python
 # -*- coding: utf-8 -*-
 import re
 import sys
