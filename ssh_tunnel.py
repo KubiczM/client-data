@@ -4,11 +4,11 @@ SSH Tunnel Management.
 Provides a function to establish a secure SSH tunnel for database connections.
 """
 
-
 from sshtunnel import SSHTunnelForwarder
 from config import SSH_HOST, SSH_PORT, SSH_USER, SSH_PASSWORD, DB_HOST, DB_PORT
 
 LOCAL_PORT = 3307
+
 
 def start_ssh_tunnel():
     tunnel = SSHTunnelForwarder(
@@ -22,8 +22,8 @@ def start_ssh_tunnel():
     print(f"SSH Tunnel established: {tunnel.local_bind_address}")
     return tunnel, LOCAL_PORT
 
+
 def stop_ssh_tunnel(tunnel):
     if tunnel:
         tunnel.stop()
         print("SSH Tunnel stopped")
-

@@ -5,7 +5,6 @@ Loads environment variables from .env file.
 Provides SSH and database configuration.
 """
 
-
 from dotenv import load_dotenv
 import os
 

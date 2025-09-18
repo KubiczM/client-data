@@ -6,42 +6,80 @@ Uses SQLAlchemy to interact with the database.
 Includes validation for personal info and integrates closed-ended questions from UI.
 """
 
-
+from sqlalchemy.orm import Session
+from database import SessionLocal
+from models import Client
 from app.ui import (
     select_goal,
     select_skill_level,
     select_preferences,
     select_training_history,
     select_injuries,
-    select_special_needs
+    select_special_needs,
 )
-
-from database import SessionLocal
-from models import Client
+import re
 
 
-def is_email_unique(session, email):
-    """Check if email already exists in the database."""
-    existing = session.query(Client).filter_by(email=email).first()
-    return existing is None
-
-def get_personal_info(session):
-    """Prompt user for personal info with basic validation."""
+def get_name(prompt):
+    """Prompt user for a name (first or last). Only letters allowed."""
     while True:
-        first_name = input("Enter first name: ").strip()
-        last_name = input("Enter last name: ").strip()
-        email = input("Enter email: ").strip()
+        name = input(prompt).strip()
+        if name.isalpha():
+            return name
+        print("Invalid input. Please enter letters only.")
+
+
+def get_phone_number():
+    """Prompt user for phone number, accept only digits and optional + at start."""
+    while True:
         phone = input("Enter phone number: ").strip()
+        if phone.startswith("+") and phone[1:].isdigit():
+            return phone
+        elif phone.isdigit():
+            return phone
+        print(
+            "Invalid phone number. Please enter digits only, optionally starting with '+'."
+        )
 
-        if not first_name or not last_name or not email:
-            print("First name, last name, and email are required. Try again.")
+
+def get_email(session: Session):
+    """Prompt user for email and check uniqueness in the database."""
+    email_pattern = r"^[\w\.-]+@[\w\.-]+\.\w+$"
+    while True:
+        email = input("Enter email: ").strip()
+        if not re.match(email_pattern, email):
+            print("Invalid email format. Please enter a valid email.")
             continue
-
-        if not is_email_unique(session, email):
-            print("Email already exists. Try a different one.")
+        existing = session.query(Client).filter_by(email=email).first()
+        if existing:
+            print("Email already exists. Please enter a different email.")
             continue
+        return email
 
-        return first_name, last_name, email, phone
+
+def get_personal_info(session: Session):
+    """Prompt user for first name, last name, email, and phone number with validation."""
+    first_name = get_name("Enter first name: ")
+    last_name = get_name("Enter last name: ")
+    email = get_email(session)
+    phone = get_phone_number()
+    return first_name, last_name, email, phone
+
+
+def print_client_summary(client: Client):
+    """Print client info nicely."""
+    print("-----------------------------")
+    print(f"Name: {client.first_name} {client.last_name}")
+    print(f"Email: {client.email}")
+    print(f"Phone: {client.phone}")
+    print(f"Goal: {client.goal}")
+    print(f"Skill Level: {client.skill_level}")
+    print(f"Preferences: {client.preferences}")
+    print(f"Training History: {client.training_history}")
+    print(f"Injuries: {client.injuries}")
+    print(f"Special Needs: {client.special_needs}")
+    print("-----------------------------")
+
 
 def create_client_profile():
     """Create a new client profile and save it to the database."""
@@ -72,27 +110,43 @@ def create_client_profile():
     session.add(new_client)
     session.commit()
     print("\nProfile created successfully!")
-    print_client_summary(Client)
+    print_client_summary(new_client)
+    print()
     session.close()
     return new_client
 
 
-def open_existing_profile():
-    """Open an existing profile from the database."""
+def list_all_profiles():
+    """List all client profiles with basic info: name, email, phone."""
     session = SessionLocal()
+    clients = session.query(Client).all()
+    if not clients:
+        print("\nNo profiles found.")
+    else:
+        print("\n-- Existing Client Profiles --")
+        for client in clients:
+            print(
+                f"{client.first_name} {client.last_name} | Email: {client.email} | Phone: {client.phone}"
+            )
+        print("-------------------------------")
+        print()
+    session.close()
+
+
+def open_existing_profile():
+    """Open an existing client profile by email and display it."""
+    session = SessionLocal()
+    print()
     email = input("Enter email of the profile to open: ").strip()
     client = session.query(Client).filter_by(email=email).first()
-
-
     if client:
-        print("\nProfile found:")
+        print("\n-- Client profile --")
         print_client_summary(client)
-        session.close()
-        return client
-
-    print("Profile not found.")
+        print()
+    else:
+        print("Profile not found.")
     session.close()
-    return None
+
 
 def delete_existing_profile():
     """Delete a profile from the database by email."""
@@ -102,7 +156,13 @@ def delete_existing_profile():
 
     if client:
         while True:
-            confirm = input(f"Are you sure you want to delete {client.first_name} {client.last_name}? (yes/no): ").strip().lower()
+            confirm = (
+                input(
+                    f"Are you sure you want to delete {client.first_name} {client.last_name}? (yes/no): "
+                )
+                .strip()
+                .lower()
+            )
             if confirm == "yes":
                 session.delete(client)
                 session.commit()
@@ -116,20 +176,3 @@ def delete_existing_profile():
     else:
         print("Profile not found.")
     session.close()
-
-
-
-
-def print_client_summary(client):
-    """Print client info."""
-    print("-----------------------------")
-    print(f"Name: {client.first_name} {client.last_name}")
-    print(f"Email: {client.email}")
-    print(f"Phone: {client.phone}")
-    print(f"Goal: {client.goal}")
-    print(f"Skill Level: {client.skill_level}")
-    print(f"Preferences: {client.preferences}")
-    print(f"Training History: {client.training_history}")
-    print(f"Injuries: {client.injuries}")
-    print(f"Special Needs: {client.special_needs}")
-    print("-----------------------------")

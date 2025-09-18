@@ -5,7 +5,6 @@ Defines the Client table using SQLAlchemy ORM.
 Includes fields for personal info, goals, skill level, preferences, injuries, and special needs.
 """
 
-
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 
