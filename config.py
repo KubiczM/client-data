@@ -1,9 +1,10 @@
 """
-Configuration Loader
+Configuration Loader.
 
-This script loads environment variables from a .env file and provides
-configuration settings for SSH and database connections.
+Loads environment variables from .env file.
+Provides SSH and database configuration.
 """
+
 
 from dotenv import load_dotenv
 import os

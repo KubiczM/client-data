@@ -1,9 +1,10 @@
 """
-Database Models
+Database Models.
 
-This script defines the SQLAlchemy model for the 'clients' table,
-representing client information in the database.
+Defines the Client table using SQLAlchemy ORM.
+Includes fields for personal info, goals, skill level, preferences, injuries, and special needs.
 """
+
 
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base

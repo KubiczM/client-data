@@ -1,9 +1,10 @@
 """
-Database Connection Setup
+Database connection setup.
 
-This script establishes a database connection using SQLAlchemy.
-It also starts an SSH tunnel for secure remote access.
+Creates SQLAlchemy engine and session.
+Optionally sets up SSH tunnel for remote database access.
 """
+
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
