@@ -30,15 +30,20 @@ def get_name(prompt):
 
 
 def get_phone_number():
-    """Prompt user for phone number, accept only digits and optional + at start."""
+    """
+    Prompt user for phone number.
+    Accepts only digits, optionally starting with '+'.
+    Must be between 7 and 15 digits (excluding '+').
+    """
+
     while True:
         phone = input("Enter phone number: ").strip()
-        if phone.startswith("+") and phone[1:].isdigit():
-            return phone
-        elif phone.isdigit():
+        digits_only = phone[1:] if phone.startswith("+") else phone
+
+        if digits_only.isdigit() and 7 <= len(digits_only) <= 15:
             return phone
         print(
-            "Invalid phone number. Please enter digits only, optionally starting with '+'."
+            "Invalid phone number. Must be 7–15 digits, optionally starting with '+'."
         )
 
 
@@ -67,7 +72,7 @@ def get_personal_info(session: Session):
 
 
 def print_client_summary(client: Client):
-    """Print client info nicely."""
+    """Print client info."""
     print("-----------------------------")
     print(f"Name: {client.first_name} {client.last_name}")
     print(f"Email: {client.email}")
@@ -145,6 +150,67 @@ def open_existing_profile():
         print()
     else:
         print("Profile not found.")
+    session.close()
+
+
+def edit_existing_profile():
+    """Edit an existing client profile by updating selected fields using yes/no prompts."""
+    session = SessionLocal()
+    email = input("\nEnter email of the profile to edit: ").strip()
+    client = session.query(Client).filter_by(email=email).first()
+
+    if not client:
+        print("Profile not found.\n")
+        session.close()
+        return
+
+    print("\n-- Current Profile Data --")
+    print_client_summary(client)
+    print("--------------------------\n")
+
+    def ask_yes_no(question: str) -> bool:
+        while True:
+            print()
+            choice = input(f"{question} (yes/no): ").strip().lower()
+            if choice == "yes":
+                return True
+            elif choice == "no":
+                return False
+            else:
+                print("Please answer 'yes' or 'no'.")
+
+    if ask_yes_no("Do you want to update first name?"):
+        client.first_name = get_name("Enter new first name: ")
+
+    if ask_yes_no("Do you want to update last name?"):
+        client.last_name = get_name("Enter new last name: ")
+
+    if ask_yes_no("Do you want to update phone number?"):
+        client.phone = get_phone_number()
+
+    if ask_yes_no("Do you want to update email?"):
+        client.email = get_email(session)
+
+    if ask_yes_no("Do you want to update goal?"):
+        client.goal = select_goal()
+
+    if ask_yes_no("Do you want to update skill level?"):
+        client.skill_level = select_skill_level()
+
+    if ask_yes_no("Do you want to update preferences?"):
+        client.preferences = select_preferences()
+
+    if ask_yes_no("Do you want to update training history?"):
+        client.training_history = select_training_history()
+
+    if ask_yes_no("Do you want to update injuries?"):
+        client.injuries = select_injuries()
+
+    if ask_yes_no("Do you want to update special needs?"):
+        client.special_needs = select_special_needs()
+
+    session.commit()
+    print("\nProfile updated successfully!\n")
     session.close()
 
 

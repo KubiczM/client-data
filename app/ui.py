@@ -15,9 +15,10 @@ def welcome_menu():
     print("1. Create a new profile")
     print("2. List all profiles")
     print("3. Open an existing profile")
-    print("4. Delete existing profile")
-    print("0. Exit")
-    print()
+    print("4. Edit existing profile")
+    print("5. Delete existing profile")
+    print("0. Exit\n")
+
     return input("Select an option (type number and press Enter): ").strip()
 
 
