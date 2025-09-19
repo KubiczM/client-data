@@ -1,6 +1,6 @@
-## ClientData
+## ClientDATA
 
-ClientData is a personal trainer's assistant that automates client management, tracks training history, and stores important information such as goals, preferences, and injuries. The project is designed to work with a remote MariaDB database over an SSH tunnel.
+ClientDATA is a personal trainer's assistant that automates client management, tracks training history, and stores important information such as goals, preferences, and injuries. The project is designed to work with a remote MariaDB database over an SSH tunnel.
 
 ### Features:
 - **Secure connection to a remote MariaDB database via SSH.**
